@@ -58,20 +58,15 @@ const folders = fs
       ].includes(folder)
   );
 
-// console.log(folders);
 let mods = {};
 
 folders.forEach((folderBasePath) => {
-  //   console.log(folderBasePath);
   mods = {
     ...mods,
     ...glob
       .sync(path.join(folderBasePath, "*.js"))
       .reduce(function (loaded, file) {
-        //   console.log("files", file);
-        //   console.log();
         var mod = require(`./${file}`);
-        //   console.log(mod);
         // mod is a function with a name, so use it!
         if (mod instanceof Function) {
           loaded[`${mod.name}_${file}`] = mod;
@@ -85,11 +80,19 @@ folders.forEach((folderBasePath) => {
       }, {}),
   };
 });
+async function processResults() {
+  let promises = Object.keys(mods).map(async (moduleName) => {
+    console.log(moduleName);
+    let newResult = await mods[moduleName](moduleName, results);
+    return newResult;
+  });
+  return await Promise.all(promises)
+    .then((res) => console.log(res))
+    .catch((err) => console.log(err));
+}
 
-Object.keys(mods).map((moduleName) => {
-  console.log(moduleName);
-  let newResult = mods[moduleName](moduleName, results);
-  results = { ...results, ...newResult };
-});
+// console.log(processResults());
 
-console.log(results);
+results = processResults();
+
+console.log("eee", results);
