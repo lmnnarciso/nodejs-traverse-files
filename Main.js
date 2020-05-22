@@ -38,7 +38,6 @@ When all the file paths are covered, I made a unique identifier for each key for
 const glob = require("glob");
 const path = require("path");
 const fs = require("fs");
-const basePath = "./folder_name1/";
 
 const scriptsFolder = "./"; // add your scripts to folder named scripts
 let data = {};
