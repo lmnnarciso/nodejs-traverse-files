@@ -80,18 +80,19 @@ folders.forEach((folderBasePath) => {
       }, {}),
   };
 });
-async function processResults() {
-  let promises = Object.keys(mods).map(async (moduleName) => {
-    console.log(moduleName);
-    let newResult = await mods[moduleName](moduleName, results);
-    return newResult;
-  });
-  return await Promise.all(promises)
-    .then((res) => console.log(res))
-    .catch((err) => console.log(err));
-}
 
-// console.log(processResults());
+async function processResults() {
+  return Object.keys(mods).reduce((accumulatorPromise, moduleName) => {
+    // console.log(moduleName);
+    console.log(`Promise loop ${moduleName}`);
+    // let newResult = await mods[moduleName](moduleName, results);
+    // await newResult.resolve();
+    console.log("accumulator promise", accumulatorPromise);
+    return accumulatorPromise.then((values) => {
+      return mods[moduleName](moduleName, results);
+    });
+  }, Promise.resolve());
+}
 
 results = processResults();
 
